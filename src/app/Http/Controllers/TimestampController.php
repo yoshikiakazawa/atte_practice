@@ -16,7 +16,8 @@ class TimestampController extends Controller
      */
     public function index()
     {
-        return view('index');
+        $user = Auth::user();
+        return view('index', compact('user'));
     }
 
     public function start(Request $request)
