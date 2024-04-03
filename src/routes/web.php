@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TimestampController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function ()
-{
-    return view('welcome');
+// Route::resource('', TimestampController::class);
+
+Route::middleware('auth')->group(function () {
+    Route::get('/', [TimestampController::class, 'index']);
+    Route::post('/start', [TimestampController::class, 'start']);
 });
