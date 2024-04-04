@@ -16,7 +16,11 @@ use App\Http\Controllers\TimestampController;
 
 // Route::resource('', TimestampController::class);
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function ()
+{
     Route::get('/', [TimestampController::class, 'index']);
-    Route::post('/start', [TimestampController::class, 'start']);
+    Route::post('/workin', [TimestampController::class, 'workin']);
+    Route::post('/workout', [TimestampController::class, 'workout']);
+    Route::post('/breakin', [TimestampController::class, 'breakin']);
+    Route::post('/breakout', [TimestampController::class, 'breakout']);
 });

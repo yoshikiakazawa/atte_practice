@@ -32,19 +32,28 @@
             <p>{{ $user->name }}さん　お疲れ様です！</p>
         </div>
         <div class="attendance__button-group">
-            <form class="attendance__button-workstart" action="/start" method="post">
+            <form class="attendance__button-workstart" action="/workin" method="post">
                 @csrf
-            <button class="attendance__button-submit" type="submit">勤務開始</button>
+                <button class="attendance__button-submit" type="submit">勤務開始</button>
             </form>
-            <form class="attendance__button-workend">
-            <button class="attendance__button-submit" type="submit">勤務終了</button>
+            <form class="attendance__button-workstart" action="/workout" method="post">
+                @csrf
+                <button class="attendance__button-submit" type="submit">勤務終了</button>
             </form>
-            <form class="attendance__button-breakstart">
+            <form class="attendance__button-breakstart" action="/breakin" method="post">
+                @csrf
                 <button class="attendance__button-submit" type="submit">休憩開始</button>
             </form>
-            <form class="attendance__button-breakend">
+            <form class="attendance__button-breakend" action="/breakout" method="post">
+                @csrf
                 <button class="attendance__button-submit" type="submit">休憩終了</button>
             </form>
+            @if (session('flash_message'))
+            <div class="flash_message">
+                {{ session('flash_message') }}
+            </div>
+            {{-- <?php print_r($breaktime) ?> --}}
+            @endif
         </div>
     </div>
 </div>

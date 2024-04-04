@@ -11,9 +11,10 @@ class Timestamp extends Model
 
     protected $fillable = [
         'user_id',
-        'start',
-        'end',
-        'break',
+        'workIn',
+        'WorkOut',
+        'breakIn',
+        'breakTime',
     ];
 
     public function user()
