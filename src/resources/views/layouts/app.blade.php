@@ -13,12 +13,14 @@
 
 <body>
     <header class="header">
+        <div class="header__inner">
             <h1 class="header__heading">Atte</h1>
             @yield('nav')
+        </div>
     </header>
-    <main>
+    <div class="content">
         @yield('content')
-    </main>
+    </div>
     <small>Atte,inc.</small>
 </body>
 

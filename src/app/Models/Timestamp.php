@@ -21,4 +21,8 @@ class Timestamp extends Model
     {
         return $this->belongsTo(User::class);
     }
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',    // ←日付の形式を指定
+        'updated_at' => 'date:Y-m-d',    // ←日付の形式を指定
+    ];
 }

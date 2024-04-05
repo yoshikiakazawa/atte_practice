@@ -23,4 +23,5 @@ Route::middleware('auth')->group(function ()
     Route::post('/workout', [TimestampController::class, 'workout']);
     Route::post('/breakin', [TimestampController::class, 'breakin']);
     Route::post('/breakout', [TimestampController::class, 'breakout']);
+    Route::get('/attendance', [TimestampController::class, 'attendance']);
 });

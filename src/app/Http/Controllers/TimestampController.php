@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Timestamp;
+use App\Models\User;
 use Carbon\Carbon;
-use DateTime;
+use Illuminate\Support\Facades\DB;
 
 class TimestampController extends Controller
 {
@@ -129,5 +130,53 @@ class TimestampController extends Controller
             }
         }
         return redirect()->back()->with('flash_message', '出勤されていません');
+    }
+
+    public function attendance()
+    {
+        $user = Auth::user();
+        $times = Timestamp::with('user')->paginate(5);
+        $users = User::all();
+
+        $groups = [];
+
+        foreach ($times as $time)
+        {
+
+            $createdAt = Carbon::parse($time->created_at)->format('Y-m-d');
+            if (!isset($groups[$createdAt]))
+            {
+                $groups[$createdAt] = [];
+            }
+
+            $time->workIn = Carbon::parse($time->workIn)->format('H:i:s');
+            $time->workOut = Carbon::parse($time->workOut)->format('H:i:s');
+            $time->breakTime = Carbon::parse($time->breakTime)->format('H:i');
+            $workIn = Carbon::parse($time->workIn);
+            $workOut = Carbon::parse($time->workOut);
+            $workingHours = $workOut->diff($workIn)->format('%H:%I:%S');
+            $time->workingHours = $workingHours;
+            $fromTimestamp = strtotime($workingHours);
+            $toTimestamp = strtotime($time->breakTime);
+            $diff = $fromTimestamp - $toTimestamp;
+            $workingtime = gmdate("H:i:s", $diff);
+            // var_dump($workingtime);
+            $time->workingtime = $workingtime;
+
+            $groups[$createdAt][] = $time;
+        }
+        // $workIn = Carbon::parse($time->workIn);
+        // $workOut = Carbon::parse($time->workOut);
+        // $workingHours = $workOut->diff($workIn)->format('%H:%I:%S');
+        // $time->workingHours = $workingHours;
+        // $fromTimestamp = strtotime($workingHours);
+        // $toTimestamp = strtotime($time->breakTime);
+        // $diff = $fromTimestamp - $toTimestamp;
+        // $workingtime = gmdate("H:i:s", $diff);
+        // var_dump($workingtime);
+        // $times->created_at = Carbon::parse($times->created_at)->format('Y-m-d');
+        // $groups = $time->groupBy('created_at');
+        // $groups->toArray();
+        return view('attendance', compact('times', 'users', 'groups'));
     }
 }

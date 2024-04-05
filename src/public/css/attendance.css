@@ -1,0 +1,39 @@
+.confirmation__heading {
+    padding-top: 24px;
+    text-align: center;
+}
+
+.confirmation__heading h2{
+    font-weight: normal;
+}
+
+.confirmation__inner{
+    max-width: 1230px;
+    margin: auto;
+}
+.confirmation__table {
+    margin: auto;
+    width: 90%;
+    border-collapse: collapse;
+}
+
+.confirmation__row {
+    border-top: 1px solid #E0DFDE;
+}
+
+.confirmation__label,
+.confirmation__data {
+    width: 20%;
+    padding: 16px 0;
+    text-align: left;
+}
+
+.confirmation__label:first-of-type,
+.confirmation__data:first-of-type {
+    padding-left: 48px;
+}
+
+.confirmation__label:last-of-type,
+.confirmation__data:last-of-type {
+    padding-right: 48px;
+}
