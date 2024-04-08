@@ -36,6 +36,17 @@ class TimestampController extends Controller
             {
                 return redirect()->back()->with('flash_message', 'すでに出勤済みです');
             }
+            elseif (empty($oldDatetime->workOut))
+            {
+                $createdDate = $oldDatetime->created_at->format('Y-m-d H:i:s');
+                $oldDatetime->workOut = $createdDate;
+                $oldDatetime->save();
+                $time = Timestamp::create([
+                    'user_id' => $user->id,
+                    'workIn' => Carbon::now(),
+                ]);
+                return redirect('/')->with('flash_message', '前回の退勤打刻されていません');
+            }
         }
         $time = Timestamp::create([
             'user_id' => $user->id,
@@ -104,7 +115,8 @@ class TimestampController extends Controller
                     $breakOut = Carbon::now();
                     $breakIn = Carbon::createFromFormat('Y-m-d H:i:s', $oldDatetime->breakIn);
                     $diffInSeconds = $breakIn->diffInSeconds($breakOut);
-                    $oldDatetime->breakTime = $diffInSeconds;
+                    // $oldDatetime->breakTime = $diffInSeconds;
+                    $oldDatetime->breakTime = gmdate('H:i:s', $diffInSeconds);
                     $oldDatetime->breakIn = null;
                     $oldDatetime->save();
                     return redirect('/')->with('flash_message', '休憩終わりました');
@@ -132,23 +144,22 @@ class TimestampController extends Controller
         return redirect()->back()->with('flash_message', '出勤されていません');
     }
 
-    public function attendance()
+    public function attendance(Request $request)
     {
         $user = Auth::user();
         $times = Timestamp::with('user')->paginate(5);
+        // $times = Timestamp::with('user')->get();
         $users = User::all();
 
         $groups = [];
 
         foreach ($times as $time)
         {
-
             $createdAt = Carbon::parse($time->created_at)->format('Y-m-d');
             if (!isset($groups[$createdAt]))
             {
                 $groups[$createdAt] = [];
             }
-
             $time->workIn = Carbon::parse($time->workIn)->format('H:i:s');
             $time->workOut = Carbon::parse($time->workOut)->format('H:i:s');
             $time->breakTime = Carbon::parse($time->breakTime)->format('H:i');
@@ -162,9 +173,38 @@ class TimestampController extends Controller
             $workingtime = gmdate("H:i:s", $diff);
             // var_dump($workingtime);
             $time->workingtime = $workingtime;
-
             $groups[$createdAt][] = $time;
         }
+        $collection = collect([]);
+        foreach ($times as $time)
+        {
+            $createdAt = $time->created_at->format('Y-m-d');
+            if (!isset($collection[$createdAt]))
+            {
+                $collection[$createdAt] = collect([]);
+            }
+            $collection[$createdAt]->push($time);
+        }
+        // dd($collection->get('2024-04-04'));
+        // foreach ($groups as $date => $group)
+        // {
+        //     dd($date);
+        // }
+        // $numberedArray = [];
+        // $i = 0;
+        // foreach ($collection as $date => $items)
+        // {
+        //     $numberedArray["{$i}"] = [$date => $items];
+        //     $i++;
+        // }
+
+        // $plucked = $collection->pluck('workIn');
+        // print_r($plucked->all());
+        // dd($numberedArray['1']);
+        // dd($collection->get('2024-04-04'));
+        // print_r($collection->toArray());
+        // dd($numberedArray['key=0']);
+
         // $workIn = Carbon::parse($time->workIn);
         // $workOut = Carbon::parse($time->workOut);
         // $workingHours = $workOut->diff($workIn)->format('%H:%I:%S');
@@ -177,6 +217,11 @@ class TimestampController extends Controller
         // $times->created_at = Carbon::parse($times->created_at)->format('Y-m-d');
         // $groups = $time->groupBy('created_at');
         // $groups->toArray();
+        // $timestamps = Timestamp::groupBy('created_at')->get('created_at');
+        // dd($timestamps);
+        // print_r($groups);
+        // dd($times);
+        // dd($numberedArray[0]);
         return view('attendance', compact('times', 'users', 'groups'));
     }
 }
