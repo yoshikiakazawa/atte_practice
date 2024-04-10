@@ -1,18 +1,34 @@
 .confirmation__heading {
-    padding-top: 24px;
-    text-align: center;
+    /* padding-top: 24px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15%;
 }
 
-.confirmation__heading h2{
-    font-weight: normal;
+.confirmation__button-submit{
+    padding: 0 12px;
+    font-weight: bold;
+    font-size: 20px;
+    background-color: snow;
+    border: 1px solid #348ABF;
+    color: #348ABF;
+    cursor: pointer;
+}
+
+.confirmation__date-today{
+    padding: 0 20px;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 .confirmation__inner{
     max-width: 1230px;
-    margin: auto;
+    margin: 0 auto;
+    height: 70%;
 }
 .confirmation__table {
-    margin: auto;
+    margin:auto;
     width: 90%;
     border-collapse: collapse;
 }
@@ -36,4 +52,8 @@
 .confirmation__label:last-of-type,
 .confirmation__data:last-of-type {
     padding-right: 48px;
+}
+
+.confirmation__pagination{
+    height: 15%;
 }

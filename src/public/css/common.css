@@ -60,6 +60,7 @@ small{
 }
 
 .pagination li:not(.active) {
+    background-color: snow;
     border: 1px solid #E0DFDE;
     padding: 4px 12px;
 }

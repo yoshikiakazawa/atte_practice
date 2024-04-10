@@ -147,81 +147,39 @@ class TimestampController extends Controller
     public function attendance(Request $request)
     {
         $user = Auth::user();
-        $times = Timestamp::with('user')->paginate(5);
-        // $times = Timestamp::with('user')->get();
         $users = User::all();
-
-        $groups = [];
-
-        foreach ($times as $time)
+        if (empty($request->date))
         {
-            $createdAt = Carbon::parse($time->created_at)->format('Y-m-d');
-            if (!isset($groups[$createdAt]))
-            {
-                $groups[$createdAt] = [];
-            }
-            $time->workIn = Carbon::parse($time->workIn)->format('H:i:s');
-            $time->workOut = Carbon::parse($time->workOut)->format('H:i:s');
-            $time->breakTime = Carbon::parse($time->breakTime)->format('H:i');
-            $workIn = Carbon::parse($time->workIn);
-            $workOut = Carbon::parse($time->workOut);
+            $yesterday = Carbon::yesterday();
+            $today = Carbon::today();
+            $tomorrow = Carbon::tomorrow();
+        }
+        else
+        {
+            $today = new Carbon($request->date);
+            $yesterday = (new Carbon($request->date))->subDay();
+            $tomorrow = (new Carbon($request->date))->addDay();
+        }
+        // $todayLists = Timestamp::whereDate('created_at', $today->format('Y-m-d'))->paginate(5);
+        $todayLists = Timestamp::whereDate('created_at', $today->format('Y-m-d'))->paginate(5)->withQueryString();
+
+        // dd($todayLists);
+
+        foreach ($todayLists as $todayList)
+        {
+            $todayList->workIn = Carbon::parse($todayList->workIn)->format('H:i:s');
+            $todayList->workOut = Carbon::parse($todayList->workOut)->format('H:i:s');
+            $todayList->breakTime = Carbon::parse($todayList->breakTime)->format('H:i');
+            $workIn = Carbon::parse($todayList->workIn);
+            $workOut = Carbon::parse($todayList->workOut);
             $workingHours = $workOut->diff($workIn)->format('%H:%I:%S');
-            $time->workingHours = $workingHours;
+            $todayList->workingHours = $workingHours;
             $fromTimestamp = strtotime($workingHours);
-            $toTimestamp = strtotime($time->breakTime);
+            $toTimestamp = strtotime($todayList->breakTime);
             $diff = $fromTimestamp - $toTimestamp;
             $workingtime = gmdate("H:i:s", $diff);
-            // var_dump($workingtime);
-            $time->workingtime = $workingtime;
-            $groups[$createdAt][] = $time;
+            $todayList->workingtime = $workingtime;
         }
-        $collection = collect([]);
-        foreach ($times as $time)
-        {
-            $createdAt = $time->created_at->format('Y-m-d');
-            if (!isset($collection[$createdAt]))
-            {
-                $collection[$createdAt] = collect([]);
-            }
-            $collection[$createdAt]->push($time);
-        }
-        // dd($collection->get('2024-04-04'));
-        // foreach ($groups as $date => $group)
-        // {
-        //     dd($date);
-        // }
-        // $numberedArray = [];
-        // $i = 0;
-        // foreach ($collection as $date => $items)
-        // {
-        //     $numberedArray["{$i}"] = [$date => $items];
-        //     $i++;
-        // }
-
-        // $plucked = $collection->pluck('workIn');
-        // print_r($plucked->all());
-        // dd($numberedArray['1']);
-        // dd($collection->get('2024-04-04'));
-        // print_r($collection->toArray());
-        // dd($numberedArray['key=0']);
-
-        // $workIn = Carbon::parse($time->workIn);
-        // $workOut = Carbon::parse($time->workOut);
-        // $workingHours = $workOut->diff($workIn)->format('%H:%I:%S');
-        // $time->workingHours = $workingHours;
-        // $fromTimestamp = strtotime($workingHours);
-        // $toTimestamp = strtotime($time->breakTime);
-        // $diff = $fromTimestamp - $toTimestamp;
-        // $workingtime = gmdate("H:i:s", $diff);
-        // var_dump($workingtime);
-        // $times->created_at = Carbon::parse($times->created_at)->format('Y-m-d');
-        // $groups = $time->groupBy('created_at');
-        // $groups->toArray();
-        // $timestamps = Timestamp::groupBy('created_at')->get('created_at');
-        // dd($timestamps);
-        // print_r($groups);
-        // dd($times);
-        // dd($numberedArray[0]);
-        return view('attendance', compact('times', 'users', 'groups'));
+        return view('attendance', compact('todayLists', 'users', 'today', 'yesterday', 'tomorrow'));
     }
 }
