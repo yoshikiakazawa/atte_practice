@@ -30,22 +30,49 @@
         <p>{{ $user->name }}さん　お疲れ様です！</p>
     </div>
     <div class="attendance__button-group">
-        <form class="attendance__button-workstart" action="/workin" method="post">
+        @if($judFirst)
+        <form class="attendance__button" action="{{ route('workIn') }}" method="post">
             @csrf
             <button class="attendance__button-submit" type="submit">勤務開始</button>
         </form>
-        <form class="attendance__button-workstart" action="/workout" method="post">
-            @csrf
-            <button class="attendance__button-submit" type="submit">勤務終了</button>
-        </form>
-        <form class="attendance__button-breakstart" action="/breakin" method="post">
-            @csrf
-            <button class="attendance__button-submit" type="submit">休憩開始</button>
-        </form>
-        <form class="attendance__button-breakend" action="/breakout" method="post">
-            @csrf
-            <button class="attendance__button-submit" type="submit">休憩終了</button>
-        </form>
+        <button class="attendance__button-submit-error" type="submit">勤務終了</button>
+        <button class="attendance__button-submit-error" type="submit">休憩開始</button>
+        <button class="attendance__button-submit-error" type="submit">休憩終了</button>
+        @else
+            @if($judWorkIn)
+            <button class="attendance__button-submit-error" type="submit">勤務開始</button>
+            @else
+            <form class="attendance__button" action="{{ route('workIn') }}" method="post">
+                @csrf
+                <button class="attendance__button-submit" type="submit">勤務開始</button>
+            </form>
+            @endif
+            @if($judOut)
+            <form class="attendance__button" action="{{ route('workOut') }}" method="post">
+                @csrf
+                <button class="attendance__button-submit" type="submit">勤務終了</button>
+            </form>
+            @else
+            <button class="attendance__button-submit-error" type="submit">勤務終了</button>
+            @endif
+            @if($judOut)
+            <form class="attendance__button" action="{{ route('breakIn') }}" method="post">
+                @csrf
+                <button class="attendance__button-submit" type="submit">休憩開始</button>
+            </form>
+            @else
+            <button class="attendance__button-submit-error" type="submit">休憩開始</button>
+            @endif
+            @if($judBreakOut)
+            <form class="attendance__button" action="{{ route('breakOut') }}" method="post">
+                @csrf
+                <button class="attendance__button-submit" type="submit">休憩終了</button>
+            </form>
+            @else
+            <button class="attendance__button-submit-error" type="submit">休憩終了</button>
+            @endif
+        @endif
+
         @if (session('flash_message'))
         <div class="flash_message">
             {{ session('flash_message') }}

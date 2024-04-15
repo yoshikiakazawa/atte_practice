@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Timestamp;
+use App\Models\BreakTime;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -16,129 +17,173 @@ class TimestampController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    private function firstTime()
+    {
+        $user = Auth::user();
+        $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
+        if (!$oldTimes)
+        {
+            return true;
+        }
+    }
+
+    private function judgmentWorkIn()
+    {
+        $user = Auth::user();
+        $today = Carbon::today()->format('Y-m-d');
+        $oldTimeCreated = Timestamp::where('user_id', $user->id)
+            ->whereDate('created_at', $today)
+            ->latest()
+            ->first();
+        // $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
+        // $createdTime = $oldTimes->created_at->format('Y-m-d');
+        if ($oldTimeCreated)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function judgmentOut()
+    {
+        $user = Auth::user();
+        $today = Carbon::today()->format('Y-m-d');
+        $oldTimeCreated = Timestamp::where('user_id', $user->id)
+            ->whereDate('created_at', $today)
+            ->latest()
+            ->first();
+        // $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
+        // $oldBreaks = BreakTime::where('timestamp_id', $user->id)->latest()->first();
+        // $createdTimes = $oldTimes->created_at->format('Y-m-d');
+        // $createdBreaks = $oldBreaks->created_at->format('Y-m-d');
+        if (!$oldTimeCreated)
+        {
+            return false;
+        }
+        if (empty($oldTimeCreated->work_out))
+        {
+            $oldBreakCreated = BreakTime::where('timestamp_id', $oldTimeCreated->id)
+                ->whereDate('created_at', $today)
+                ->latest()
+                ->first();
+            return (!$oldBreakCreated || !empty($oldBreakCreated->break_out));
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private function judgmentBreakOut()
+    {
+        $user = Auth::user();
+        $today = Carbon::today()->format('Y-m-d');
+        $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
+        if ($oldTimes && !empty($oldTimes->id))
+        {
+            $oldBreakCreated = BreakTime::where('timestamp_id', $oldTimes->id)
+                ->whereDate('created_at', $today)
+                ->latest()
+                ->first();
+            // $oldBreaks = BreakTime::where('timestamp_id', $user->id)->latest()->first();
+            // $createdTimes = $oldTimes->created_at->format('Y-m-d');
+            // $createdBreaks = $oldBreaks->created_at->format('Y-m-d');
+            if (empty($oldBreakCreated->break_out))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
     public function index()
     {
         $user = Auth::user();
-
-        return view('index', compact('user'));
+        $judFirst = $this->firstTime();
+        $judWorkIn = $this->judgmentWorkIn();
+        $judOut = $this->judgmentOut();
+        $judBreakOut = $this->judgmentBreakOut();
+        return view('index', compact('user', 'judFirst', 'judWorkIn', 'judOut', 'judBreakOut'));
     }
 
-    public function workin(Request $request)
+    public function workIn()
     {
         $user = Auth::user();
-        $oldDatetime = Timestamp::where('user_id', $user->id)->latest('created_at')->first();
-        if ($oldDatetime && $oldDatetime->workIn)
+        $oldTimes = Timestamp::where('user_id', $user->id)->latest('created_at')->first();
+        $oldBreaks = BreakTime::where('timestamp_id', $oldTimes)->latest('created_at')->first();
+        if ($oldTimes && $oldTimes->work_in)
         {
-            $timestamp = now()->format('Y-m-d');
-            $createdDate = $oldDatetime->created_at->format('Y-m-d');
+            $today = Carbon::today()->format('Y-m-d');
+            $createdDate = $oldTimes->created_at->format('Y-m-d');
 
-            if ($timestamp == $createdDate)
+            if ($today == $createdDate)
             {
                 return redirect()->back()->with('flash_message', 'すでに出勤済みです');
             }
-            elseif (empty($oldDatetime->workOut))
+            elseif (empty($oldTimes->work_out) && empty($oldBreaks->break_out))
             {
-                $createdDate = $oldDatetime->created_at->format('Y-m-d H:i:s');
-                $oldDatetime->workOut = $createdDate;
-                $oldDatetime->save();
-                $time = Timestamp::create([
+                Timestamp::create([
                     'user_id' => $user->id,
-                    'workIn' => Carbon::now(),
+                    'work_in' => Carbon::now(),
                 ]);
-                return redirect('/')->with('flash_message', '前回の退勤打刻されていません');
+                $oldBreaks->break_out = $oldBreaks->break_in;
+                $oldBreaks->break_out;
+                $oldBreaks->save();
+                $oldTimes->work_out = $oldTimes->work_in;
+                $oldTimes->work_out;
+                $oldTimes->save();
+                return redirect('/')->with('flash_message', 'おはようございます！前回の退勤と休憩終了打刻されていませんので修正お願いします');
+            }
+            elseif (empty($oldTimes->work_out))
+            {
+                // $oldTimes->work_out = $oldTimes->work_in;
+                // $oldTimes->save();
+                Timestamp::create([
+                    'user_id' => $user->id,
+                    'work_in' => Carbon::now(),
+                ]);
+                $oldTimes->work_out = $oldTimes->work_in;
+                $oldTimes->work_out;
+                $oldTimes->save();
+                return redirect('/')->with('flash_message', 'おはようございます！前回の退勤打刻されていませんので修正お願いします');
             }
         }
-        $time = Timestamp::create([
+        Timestamp::create([
             'user_id' => $user->id,
-            'workIn' => Carbon::now(),
+            'work_in' => Carbon::now(),
         ]);
         return redirect('/')->with('flash_message', 'おはようございます！');
     }
 
-    public function workout(Request $request)
+    public function workOut()
     {
         $user = Auth::user();
-        $oldDatetime = Timestamp::where('user_id', $user->id)->latest('created_at')->first();
-        if ($oldDatetime && $oldDatetime->workIn)
+        $oldTimes = Timestamp::where('user_id', $user->id)->latest('created_at')->first();
+        $oldBreaks = BreakTime::where('timestamp_id', $oldTimes->user_id)->latest('created_at')->first();
+        if ($oldTimes)
         {
-            $timestamp = now()->format('Y-m-d');
-            $createdDate = $oldDatetime->created_at->format('Y-m-d');
-
-            if ($timestamp == $createdDate && empty($oldDatetime->breakIn) && empty($oldDatetime->workOut))
+            $today = Carbon::today()->format('Y-m-d');
+            $createdTimes = $oldTimes->created_at->format('Y-m-d');
+            if ($today == $createdTimes)
             {
-                $oldDatetime->workOut = Carbon::now();
-                $oldDatetime->save();
-                return redirect('/')->with('flash_message', 'お疲れさまでした！');
-            }
-            elseif (!empty($oldDatetime->breakIn))
-            {
-                return redirect()->back()->with('flash_message', '休憩中です');
-            }
-        }
-        return redirect()->back()->with('flash_message', '出勤されていません');
-    }
-
-    public function breakin(Request $request)
-    {
-        $user = Auth::user();
-        $oldDatetime = Timestamp::where('user_id', $user->id)->latest('created_at')->first();
-        if ($oldDatetime && $oldDatetime->workIn)
-        {
-            $timestamp = now()->format('Y-m-d');
-            $createdDate = $oldDatetime->created_at->format('Y-m-d');
-
-            if ($timestamp == $createdDate && empty($oldDatetime->breakIn) && empty($oldDatetime->workOut))
-            {
-                $oldDatetime->breakIn = Carbon::now();
-                $oldDatetime->save();
-                return redirect('/')->with('flash_message', '休憩に入りました');
-            }
-            elseif (!empty($oldDatetime->breakIn))
-            {
-                return redirect()->back()->with('flash_message', '休憩中です');
-            }
-        }
-        return redirect()->back()->with('flash_message', '出勤されていません');
-    }
-    public function breakout(Request $request)
-    {
-        $user = Auth::user();
-        $oldDatetime = Timestamp::where('user_id', $user->id)->latest('created_at')->first();
-        if ($oldDatetime && $oldDatetime->workIn)
-        {
-            $timestamp = now()->format('Y-m-d');
-            $createdDate = $oldDatetime->created_at->format('Y-m-d');
-            if ($timestamp == $createdDate && !empty($oldDatetime->breakIn) && empty($oldDatetime->workOut))
-            {
-                if (empty($oldDatetime->breakTime))
+                if (!empty($oldBreaks->break_out) && empty($oldTimes->work_out))
                 {
-                    $breakOut = Carbon::now();
-                    $breakIn = Carbon::createFromFormat('Y-m-d H:i:s', $oldDatetime->breakIn);
-                    $diffInSeconds = $breakIn->diffInSeconds($breakOut);
-                    // $oldDatetime->breakTime = $diffInSeconds;
-                    $oldDatetime->breakTime = gmdate('H:i:s', $diffInSeconds);
-                    $oldDatetime->breakIn = null;
-                    $oldDatetime->save();
-                    return redirect('/')->with('flash_message', '休憩終わりました');
+                    $currentTime = Carbon::now();
+                    $oldTimes->work_out = $currentTime;
+                    $oldTimes->work_out;
+                    $oldTimes->save();
+                    return redirect('/')->with('flash_message', 'お疲れさまでした！');
                 }
-                else
+                elseif (empty($oldBreaks->break_out))
                 {
-                    $breakOut = Carbon::now();
-                    $breakIn = Carbon::createFromFormat('Y-m-d H:i:s', $oldDatetime->breakIn);
-                    $diffInSeconds = $breakIn->diffInSeconds($breakOut);
-                    $oldBreakTimeSeconds = Carbon::parse($oldDatetime->breakTime)->hour * 3600 +
-                        Carbon::parse($oldDatetime->breakTime)->minute * 60 +
-                        Carbon::parse($oldDatetime->breakTime)->second;
-                    $newBreakTimeSeconds = $oldBreakTimeSeconds + $diffInSeconds;
-                    $oldDatetime->breakTime = gmdate('H:i:s', $newBreakTimeSeconds);
-                    $oldDatetime->breakIn = null;
-                    $oldDatetime->save();
-                    return redirect('/')->with('flash_message', '休憩終わりました');
+                    return redirect()->back()->with('flash_message', '休憩中です');
                 }
-            }
-            elseif (empty($oldDatetime->breakIn))
-            {
-                return redirect()->back()->with('flash_message', '休憩開始していません');
             }
         }
         return redirect()->back()->with('flash_message', '出勤されていません');
@@ -160,26 +205,26 @@ class TimestampController extends Controller
             $yesterday = (new Carbon($request->date))->subDay();
             $tomorrow = (new Carbon($request->date))->addDay();
         }
-        // $todayLists = Timestamp::whereDate('created_at', $today->format('Y-m-d'))->paginate(5);
-        $todayLists = Timestamp::whereDate('created_at', $today->format('Y-m-d'))->paginate(5)->withQueryString();
-
-        // dd($todayLists);
-
-        foreach ($todayLists as $todayList)
+        $todayLists = Timestamp::whereDate('created_at', $today)->paginate(5)->withQueryString();
+        $timestamps = Timestamp::select('id', DB::raw('SUM(TIME_TO_SEC(work_out) - TIME_TO_SEC(work_in)) AS total_work_time'))
+            ->groupBy('id')
+            ->get();
+        $breakTimes = BreakTime::select('timestamp_id', DB::raw('SUM(TIME_TO_SEC(break_out) - TIME_TO_SEC(break_in)) AS total_break_time'))
+            ->groupBy('timestamp_id')
+            ->get();
+        $workAndBreakTimes = [];
+        foreach ($timestamps as $timestamp)
         {
-            $todayList->workIn = Carbon::parse($todayList->workIn)->format('H:i:s');
-            $todayList->workOut = Carbon::parse($todayList->workOut)->format('H:i:s');
-            $todayList->breakTime = Carbon::parse($todayList->breakTime)->format('H:i');
-            $workIn = Carbon::parse($todayList->workIn);
-            $workOut = Carbon::parse($todayList->workOut);
-            $workingHours = $workOut->diff($workIn)->format('%H:%I:%S');
-            $todayList->workingHours = $workingHours;
-            $fromTimestamp = strtotime($workingHours);
-            $toTimestamp = strtotime($todayList->breakTime);
-            $diff = $fromTimestamp - $toTimestamp;
-            $workingtime = gmdate("H:i:s", $diff);
-            $todayList->workingtime = $workingtime;
+            $workTime = $timestamp->total_work_time;
+            $breakTime = $breakTimes->firstWhere('timestamp_id', $timestamp->id);
+            $breakTime = $breakTime ? $breakTime->total_break_time : 0;
+            $workAndBreakTimes[] = [
+                'timestamp_id' => $timestamp->id,
+                'total_work_time' => $workTime - $breakTime,
+            ];
         }
-        return view('attendance', compact('todayLists', 'users', 'today', 'yesterday', 'tomorrow'));
+
+        // dd($workAndBreakTimes);
+        return view('attendance', compact('todayLists', 'users', 'today', 'yesterday', 'tomorrow', 'breakTimes', 'workAndBreakTimes'));
     }
 }

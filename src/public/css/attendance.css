@@ -12,6 +12,7 @@
     font-size: 20px;
     background-color: snow;
     border: 1px solid #348ABF;
+    border-radius: 2px;
     color: #348ABF;
     cursor: pointer;
 }
@@ -42,9 +43,10 @@
     width: 20%;
     padding: 16px 0;
     text-align: left;
+    padding-left: 48px;
 }
 
-.confirmation__label:first-of-type,
+/* .confirmation__label:first-of-type,
 .confirmation__data:first-of-type {
     padding-left: 48px;
 }
@@ -52,7 +54,7 @@
 .confirmation__label:last-of-type,
 .confirmation__data:last-of-type {
     padding-right: 48px;
-}
+} */
 
 .confirmation__pagination{
     height: 15%;

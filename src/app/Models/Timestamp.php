@@ -11,18 +11,16 @@ class Timestamp extends Model
 
     protected $fillable = [
         'user_id',
-        'workIn',
-        'WorkOut',
-        'breakIn',
-        'breakTime',
+        'work_in',
+        'Work_out',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    protected $casts = [
-        'created_at' => 'date:Y-m-d',    // ←日付の形式を指定
-        'updated_at' => 'date:Y-m-d',    // ←日付の形式を指定
-    ];
+    public function breakTime()
+    {
+        return $this->hasMany(BreakTime::class);
+    }
 }
