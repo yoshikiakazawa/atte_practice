@@ -6,7 +6,11 @@
 
 **Docker ビルド**
 
-1. `git clone git@github.com:yoshikiakazawa/atte_practice.git`
+1. ```bash
+   git clone git@github.com:yoshikiakazawa/atte_practice.git
+   ```
+
+````
 2. DockerDesktop アプリを立ち上げる
 3. `docker-compose up -d --build`
 
@@ -18,7 +22,7 @@ mysql:
     platform: linux/x86_64(この文追加)
     image: mysql:8.0.26
     environment:
-```
+````
 
 **Laravel 環境構築**
 
@@ -55,6 +59,7 @@ php artisan migrate
 - MySQL8.0.26
 
 ## テーブル設計
+
 ![alt](image-1.png)
 
 ## ER 図
