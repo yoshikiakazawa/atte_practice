@@ -10,7 +10,11 @@
    git clone git@github.com:yoshikiakazawa/atte_practice.git
    ```
 2. DockerDesktop アプリを立ち上げる
-3. `docker-compose up -d --build`
+3. ```bash
+   docker-compose up -d --build
+   ```
+
+````
 
 > _Mac の M1・M2 チップの PC の場合、`no matching manifest for linux/arm64/v8 in the manifest list entries`のメッセージが表示されビルドができないことがあります。
 > エラーが発生する場合は、docker-compose.yml ファイルの「mysql」内に「platform」の項目を追加で記載してください_
@@ -20,12 +24,19 @@ mysql:
     platform: linux/x86_64(この文追加)
     image: mysql:8.0.26
     environment:
-```
+````
 
 **Laravel 環境構築**
 
-1. `docker-compose exec php bash`
-2. `composer install`
+1. ```bash
+   docker-compose exec php bash
+   ```
+
+````
+2. ```bash
+composer install
+````
+
 3. 「.env.example」ファイルを 「.env」ファイルに命名を変更。または、新しく.env ファイルを作成
 4. .env に以下の環境変数を追加
 
