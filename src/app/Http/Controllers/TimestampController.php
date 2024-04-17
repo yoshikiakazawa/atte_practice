@@ -20,7 +20,7 @@ class TimestampController extends Controller
     private function firstTime()
     {
         $user = Auth::user();
-        $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
+        $oldTimes = Timestamp::where('user_id', $user->id)->get();
         if (!$oldTimes)
         {
             return true;
@@ -91,7 +91,7 @@ class TimestampController extends Controller
             // $oldBreaks = BreakTime::where('timestamp_id', $user->id)->latest()->first();
             // $createdTimes = $oldTimes->created_at->format('Y-m-d');
             // $createdBreaks = $oldBreaks->created_at->format('Y-m-d');
-            if (empty($oldBreakCreated->break_out))
+            if ($oldBreakCreated && empty($oldBreakCreated->break_out))
             {
                 return true;
             }
@@ -115,42 +115,40 @@ class TimestampController extends Controller
     public function workIn()
     {
         $user = Auth::user();
-        $oldTimes = Timestamp::where('user_id', $user->id)->latest('created_at')->first();
-        $oldBreaks = BreakTime::where('timestamp_id', $oldTimes)->latest('created_at')->first();
-        if ($oldTimes && $oldTimes->work_in)
+        $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
+        $oldBreaks = BreakTime::where('timestamp_id', $oldTimes->id)->latest()->first();
+        if ($oldTimes)
         {
             $today = Carbon::today()->format('Y-m-d');
-            $createdDate = $oldTimes->created_at->format('Y-m-d');
+            $createdTimes = $oldTimes->created_at->format('Y-m-d');
 
-            if ($today == $createdDate)
+            if ($today == $createdTimes)
             {
-                return redirect()->back()->with('flash_message', 'すでに出勤済みです');
+                return redirect('/')->with('flash_message', '本日はすでに出勤済みです');
             }
             elseif (empty($oldTimes->work_out) && empty($oldBreaks->break_out))
             {
+                $oldBreaks->break_out = $oldBreaks->break_in;
+                $oldBreaks->break_out;
+                $oldBreaks->save();
+                $oldTimes->work_out = $oldBreaks->break_in;
+                $oldTimes->work_out;
+                $oldTimes->save();
                 Timestamp::create([
                     'user_id' => $user->id,
                     'work_in' => Carbon::now(),
                 ]);
-                $oldBreaks->break_out = $oldBreaks->break_in;
-                $oldBreaks->break_out;
-                $oldBreaks->save();
-                $oldTimes->work_out = $oldTimes->work_in;
-                $oldTimes->work_out;
-                $oldTimes->save();
                 return redirect('/')->with('flash_message', 'おはようございます！前回の退勤と休憩終了打刻されていませんので修正お願いします');
             }
             elseif (empty($oldTimes->work_out))
             {
-                // $oldTimes->work_out = $oldTimes->work_in;
-                // $oldTimes->save();
+                $oldTimes->work_out = $oldTimes->work_in;
+                $oldTimes->work_out;
+                $oldTimes->save();
                 Timestamp::create([
                     'user_id' => $user->id,
                     'work_in' => Carbon::now(),
                 ]);
-                $oldTimes->work_out = $oldTimes->work_in;
-                $oldTimes->work_out;
-                $oldTimes->save();
                 return redirect('/')->with('flash_message', 'おはようございます！前回の退勤打刻されていませんので修正お願いします');
             }
         }
@@ -164,8 +162,8 @@ class TimestampController extends Controller
     public function workOut()
     {
         $user = Auth::user();
-        $oldTimes = Timestamp::where('user_id', $user->id)->latest('created_at')->first();
-        $oldBreaks = BreakTime::where('timestamp_id', $oldTimes->user_id)->latest('created_at')->first();
+        $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
+        $oldBreaks = BreakTime::where('timestamp_id', $oldTimes->user_id)->latest()->first();
         if ($oldTimes)
         {
             $today = Carbon::today()->format('Y-m-d');
