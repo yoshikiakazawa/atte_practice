@@ -1,7 +1,7 @@
 # Atte（アット）
 
 - ある企業の勤怠管理システム
-  ![alt](image-2.png)
+  ![alt text](image-1.png)
 
 ## 環境構築
 
