@@ -54,24 +54,8 @@
             <td class="confirmation__data">{{ $todayList->user->name }}</td>
             <td class="confirmation__data">{{ $todayList->work_in }}</td>
             <td class="confirmation__data">{{ $todayList->work_out }}</td>
-            @php
-            $breakTime = null;
-            $workAndBreakTime = null;
-            foreach ($breakTimes as $bt) {
-                if ($bt['timestamp_id'] == $todayList->id) {
-                    $breakTime = $bt;
-                    break;
-                }
-            }
-            foreach ($workAndBreakTimes as $wabt) {
-                if ($wabt['timestamp_id'] == $todayList->id) {
-                    $workAndBreakTime = $wabt;
-                    break;
-                }
-            }
-            @endphp
-            <td class="confirmation__data">{{ $breakTime ? gmdate('H:i:s', $breakTime['total_break_time']) : '' }}</td>
-            <td class="confirmation__data">{{ $workAndBreakTime ? gmdate('H:i:s', $workAndBreakTime['total_work_time']) : '' }}</td>
+            <td class="confirmation__data">{{ $todayList->break_total }}</td>
+            <td class="confirmation__data">{{ $todayList->working_time }}</td>
         </tr>
         @endforeach
     </table>

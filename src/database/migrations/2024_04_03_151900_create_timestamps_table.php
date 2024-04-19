@@ -19,6 +19,7 @@ class CreateTimestampsTable extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->time('work_in');
             $table->time('work_out')->nullable();
+            $table->time('break_total')->nullable();
             $table->timestamps();
         });
     }

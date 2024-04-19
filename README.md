@@ -1,6 +1,7 @@
 # Atte（アット）
 
 - ある企業の勤怠管理システム
+  ![alt](image-2.png)
 
 ## 環境構築
 
@@ -65,17 +66,13 @@ php artisan migrate
 
 ## テーブル設計
 
-![alt](image-1.png)
+![alt text](image.png)
 
 ## ER 図
 
-![alt](image.png)
+![alt text](image-3.png)
 
 ## URL
 
 - 開発環境：http://localhost/
 - phpMyAdmin:：http://localhost:8080/
-
-```
-
-```

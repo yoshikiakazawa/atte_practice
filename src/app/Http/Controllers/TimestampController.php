@@ -35,8 +35,6 @@ class TimestampController extends Controller
             ->whereDate('created_at', $today)
             ->latest()
             ->first();
-        // $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
-        // $createdTime = $oldTimes->created_at->format('Y-m-d');
         if ($oldTimeCreated)
         {
             return true;
@@ -55,10 +53,6 @@ class TimestampController extends Controller
             ->whereDate('created_at', $today)
             ->latest()
             ->first();
-        // $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
-        // $oldBreaks = BreakTime::where('timestamp_id', $user->id)->latest()->first();
-        // $createdTimes = $oldTimes->created_at->format('Y-m-d');
-        // $createdBreaks = $oldBreaks->created_at->format('Y-m-d');
         if (!$oldTimeCreated)
         {
             return false;
@@ -88,9 +82,6 @@ class TimestampController extends Controller
                 ->whereDate('created_at', $today)
                 ->latest()
                 ->first();
-            // $oldBreaks = BreakTime::where('timestamp_id', $user->id)->latest()->first();
-            // $createdTimes = $oldTimes->created_at->format('Y-m-d');
-            // $createdBreaks = $oldBreaks->created_at->format('Y-m-d');
             if ($oldBreakCreated && empty($oldBreakCreated->break_out))
             {
                 return true;
@@ -116,11 +107,11 @@ class TimestampController extends Controller
     {
         $user = Auth::user();
         $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
-        $oldBreaks = BreakTime::where('timestamp_id', $oldTimes->id)->latest()->first();
         if ($oldTimes)
         {
             $today = Carbon::today()->format('Y-m-d');
             $createdTimes = $oldTimes->created_at->format('Y-m-d');
+            $oldBreaks = BreakTime::where('timestamp_id', $oldTimes->id)->latest()->first();
 
             if ($today == $createdTimes)
             {
@@ -163,7 +154,7 @@ class TimestampController extends Controller
     {
         $user = Auth::user();
         $oldTimes = Timestamp::where('user_id', $user->id)->latest()->first();
-        $oldBreaks = BreakTime::where('timestamp_id', $oldTimes->user_id)->latest()->first();
+        $oldBreaks = BreakTime::where('timestamp_id', $oldTimes->id)->latest()->first();
         if ($oldTimes)
         {
             $today = Carbon::today()->format('Y-m-d');
@@ -204,25 +195,17 @@ class TimestampController extends Controller
             $tomorrow = (new Carbon($request->date))->addDay();
         }
         $todayLists = Timestamp::whereDate('created_at', $today)->paginate(5)->withQueryString();
-        $timestamps = Timestamp::select('id', DB::raw('SUM(TIME_TO_SEC(work_out) - TIME_TO_SEC(work_in)) AS total_work_time'))
-            ->groupBy('id')
-            ->get();
-        $breakTimes = BreakTime::select('timestamp_id', DB::raw('SUM(TIME_TO_SEC(break_out) - TIME_TO_SEC(break_in)) AS total_break_time'))
-            ->groupBy('timestamp_id')
-            ->get();
-        $workAndBreakTimes = [];
-        foreach ($timestamps as $timestamp)
+        foreach ($todayLists as $todayList)
         {
-            $workTime = $timestamp->total_work_time;
-            $breakTime = $breakTimes->firstWhere('timestamp_id', $timestamp->id);
-            $breakTime = $breakTime ? $breakTime->total_break_time : 0;
-            $workAndBreakTimes[] = [
-                'timestamp_id' => $timestamp->id,
-                'total_work_time' => $workTime - $breakTime,
-            ];
+            $workIn = Carbon::parse($todayList->work_in);
+            $workOut = Carbon::parse($todayList->work_out);
+            $workingHours = $workOut->diff($workIn)->format('%H:%I:%S');
+            $fromTimestamp = strtotime($workingHours);
+            $toTimestamp = strtotime($todayList->break_total);
+            $diff = $fromTimestamp - $toTimestamp;
+            $workingTime = gmdate("H:i:s", $diff);
+            $todayList->working_time = $workingTime;
         }
-
-        // dd($workAndBreakTimes);
-        return view('attendance', compact('todayLists', 'users', 'today', 'yesterday', 'tomorrow', 'breakTimes', 'workAndBreakTimes'));
+        return view('attendance', compact('todayLists', 'users', 'today', 'yesterday', 'tomorrow'));
     }
 }
