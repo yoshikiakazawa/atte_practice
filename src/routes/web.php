@@ -25,4 +25,6 @@ Route::middleware('auth')->group(function ()
     Route::post('/breakin', [BreakTimeController::class, 'breakIn'])->name('breakIn');
     Route::post('/breakout', [BreakTimeController::class, 'breakOut'])->name('breakOut');
     Route::get('/attendance', [TimestampController::class, 'attendance'])->name('attendance');
+    Route::get('/admin', [TimestampController::class, 'admin'])->name('admin');
+    Route::get('/user/{id}', [TimestampController::class, 'user'])->name('user');
 });

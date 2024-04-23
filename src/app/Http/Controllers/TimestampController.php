@@ -180,7 +180,6 @@ class TimestampController extends Controller
 
     public function attendance(Request $request)
     {
-        $user = Auth::user();
         $users = User::all();
         if (empty($request->date))
         {
@@ -207,5 +206,29 @@ class TimestampController extends Controller
             $todayList->working_time = $workingTime;
         }
         return view('attendance', compact('todayLists', 'users', 'today', 'yesterday', 'tomorrow'));
+    }
+
+    public function admin()
+    {
+        $users = User::paginate(5);
+        return view('admin', compact('users'));
+    }
+
+    public function user(User $id)
+    {
+        $users = User::all();
+        $userDataLists = Timestamp::where('user_id', $id->id)->latest()->get();
+        foreach ($userDataLists as $userDataList)
+        {
+            $workIn = Carbon::parse($userDataList->work_in);
+            $workOut = Carbon::parse($userDataList->work_out);
+            $workingHours = $workOut->diff($workIn)->format('%H:%I:%S');
+            $fromTimestamp = strtotime($workingHours);
+            $toTimestamp = strtotime($userDataList->break_total);
+            $diff = $fromTimestamp - $toTimestamp;
+            $workingTime = gmdate("H:i:s", $diff);
+            $userDataList->working_time = $workingTime;
+        }
+        return view('user', compact('users', 'userDataLists'));
     }
 }

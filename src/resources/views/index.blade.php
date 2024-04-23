@@ -27,7 +27,7 @@
 @if (Auth::check())
 <div class="attendance__panel">
     <div class="attendance__message">
-        <p>{{ $user->name }}さん　お疲れ様です！</p>
+        <p><a class="attendance__message-btn" href="{{ route('user',$user->id) }}">{{ $user->name }}</a>さん　お疲れ様です！</p>
     </div>
     <div class="attendance__button-group">
         @if($judFirst)

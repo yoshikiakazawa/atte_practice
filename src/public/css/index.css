@@ -4,10 +4,20 @@
 }
 
 .attendance__message{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 24px;
-    padding: 24px;
     height: 120px;
+}
+
+.attendance__message p {
     text-align: center;
+}
+
+.attendance__message-btn{
+    text-decoration: none;
+    color: black;
 }
 
 .attendance__button-group{
