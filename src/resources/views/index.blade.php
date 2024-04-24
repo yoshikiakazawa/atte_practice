@@ -4,23 +4,8 @@
 <link rel="stylesheet" href="{{ asset('css/index.css') }}">
 @endsection
 
-@section('nav')
-<nav>
-    <ul class="header-nav">
-        <li class="header-nav__item">
-        <a class="header-nav__link" href="/">ホーム</a>
-        </li>
-        <li class="header-nav__item">
-            <a class="header-nav__link" href="/attendance">日付一覧</a>
-            </li>
-        <li class="header-nav__item">
-            <form class="form" action="/logout" method="post">
-                @csrf
-            <button class="header-nav__button">ログアウト</button>
-        </form>
-        </li>
-    </ul>
-</nav>
+@section('header')
+@include('layouts.header_nav')
 @endsection
 
 @section('content')

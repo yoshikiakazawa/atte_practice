@@ -4,6 +4,10 @@
 <link rel="stylesheet" href="{{ asset('css/register.css') }}">
 @endsection
 
+@section('header')
+@include('layouts.header')
+@endsection
+
 @section('content')
 <div class="register-form__heading">
     <h2>会員登録</h2>
