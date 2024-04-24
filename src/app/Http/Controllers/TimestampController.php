@@ -214,21 +214,35 @@ class TimestampController extends Controller
         return view('admin', compact('users'));
     }
 
-    public function user(User $id)
+    public function user(Request $request, User $id)
     {
-        $users = User::all();
-        $userDataLists = Timestamp::where('user_id', $id->id)->latest()->get();
-        foreach ($userDataLists as $userDataList)
+        if (empty($request->date))
         {
-            $workIn = Carbon::parse($userDataList->work_in);
-            $workOut = Carbon::parse($userDataList->work_out);
+            $thisMonth = Carbon::now();
+            $lastMonth = $thisMonth->copy()->subMonth();
+            $nextMonth = $thisMonth->copy()->addMonth();
+        }
+        else
+        {
+            $thisMonth = Carbon::parse($request->date);
+            $lastMonth = $thisMonth->copy()->subMonth();
+            $nextMonth = $thisMonth->copy()->addMonth();
+        }
+        $thisMonthLists = Timestamp::where('user_id', $id->id)
+            ->whereYear('created_at', $thisMonth->year)
+            ->whereMonth('created_at', $thisMonth->month)
+            ->latest()->paginate(7)->withQueryString();
+        foreach ($thisMonthLists as $thisMonthList)
+        {
+            $workIn = Carbon::parse($thisMonthList->work_in);
+            $workOut = Carbon::parse($thisMonthList->work_out);
             $workingHours = $workOut->diff($workIn)->format('%H:%I:%S');
             $fromTimestamp = strtotime($workingHours);
-            $toTimestamp = strtotime($userDataList->break_total);
+            $toTimestamp = strtotime($thisMonthList->break_total);
             $diff = $fromTimestamp - $toTimestamp;
             $workingTime = gmdate("H:i:s", $diff);
-            $userDataList->working_time = $workingTime;
+            $thisMonthList->working_time = $workingTime;
         }
-        return view('user', compact('users', 'userDataLists'));
+        return view('user', compact('id', 'thisMonthLists', 'thisMonth', 'lastMonth', 'nextMonth'));
     }
 }

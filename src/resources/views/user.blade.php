@@ -10,10 +10,24 @@
 
 @section('content')
 @if (Auth::check())
-
 <div class="user__heading">
-    <h2>{{ $userDataLists->first()->user->name }}さん 勤務データ</h2>
+    <div class="user__heading-title">
+        <h2>{{ $id->name }}さん 勤務データ</h2>
+    </div>
+    <div class="user__heading-nav">
+        <form class="user__button" action="/user/{{$id->id}}" method="get">
+            <button class="user__button-submit" name="date" value="{{ $lastMonth }}" type="submit" > &lt;
+            </button>
+        </form>
+        <p class="user__date-thisMonth">
+            {{ $thisMonth->format('Y-m') }}
+        </p>
+        <form class="user__button" action="/user/{{$id->id}}" method="get" >
+            <button class="user__button-submit" name="date" value="{{ $nextMonth }}" type="submit" > &gt;</button>
+        </form>
+    </div>
 </div>
+
 <div class="user__inner">
     <table class="user__table">
         <tr class="user__row">
@@ -23,19 +37,19 @@
             <th class="user__label">休憩時間</th>
             <th class="user__label">勤務時間</th>
         </tr>
-        @foreach ($userDataLists as $userDataList)
+        @foreach ($thisMonthLists as $thisMonthList)
         <tr class="user__row">
-            <td class="user__data">{{ $userDataList->created_at->format('Y-m-d') }}</td>
-            <td class="user__data">{{ $userDataList->work_in }}</td>
-            <td class="user__data">{{ $userDataList->work_out }}</td>
-            <td class="user__data">{{ $userDataList->break_total }}</td>
-            <td class="user__data">{{ $userDataList->working_time }}</td>
+            <td class="user__data">{{ $thisMonthList->created_at->format('Y-m-d') }}</td>
+            <td class="user__data">{{ $thisMonthList->work_in }}</td>
+            <td class="user__data">{{ $thisMonthList->work_out }}</td>
+            <td class="user__data">{{ $thisMonthList->break_total }}</td>
+            <td class="user__data">{{ $thisMonthList->working_time }}</td>
         </tr>
         @endforeach
     </table>
 </div>
 <div class="user__pagination">
-    {{-- {{ $userDataLists->links('vendor.pagination.custom') }} --}}
+    {{ $thisMonthLists->links('vendor.pagination.custom') }}
 </div>
 @endif
 @endsection

@@ -6,7 +6,6 @@
 }
 
 .admin__heading-title{
-    /* padding-top: 20px; */
     text-align: center;
 }
 
@@ -41,7 +40,6 @@
 .admin__data:nth-child(2) {
     width: 20%;
     text-align: left;
-    background-color: aqua;
 }
 
 .admin__label:nth-child(3),
@@ -54,7 +52,6 @@
 .admin__data:nth-child(4) {
     width: 10%;
     text-align: center;
-    background-color: aqua;
 }
 
 .admin__label:nth-child(5),

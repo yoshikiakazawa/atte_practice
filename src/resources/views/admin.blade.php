@@ -28,7 +28,9 @@
             <td class="admin__data">{{ $user->id }}</td>
             <td class="admin__data">{{ $user->name }}</td>
             <td class="admin__data">{{ $user->email }}</td>
-            <td class="admin__data"><a class="btn" href="{{ route('user',$user->id) }}">詳細</a></td>
+            <td class="admin__data">
+                <a class="btn" href="{{ route('user',$user->id) }}">詳細</a>
+            </td>
             <td class="admin__data">{{ $user->created_at->format('Y-m-d') }}</td>
         </tr>
         @endforeach

@@ -1,8 +1,19 @@
 .user__heading {
+    height: 20%;
+}
+
+.user__heading-title{
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 15%;
+    height: 50%;
+}
+
+.user__heading-nav{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50%;
 }
 
 .user__heading h2{
@@ -19,7 +30,7 @@
     cursor: pointer;
 }
 
-.user__date-today{
+.user__date-thisMonth{
     padding: 0 20px;
     font-weight: bold;
     font-size: 20px;
@@ -28,7 +39,7 @@
 .user__inner{
     max-width: 1230px;
     margin: 0 auto;
-    height: 70%;
+    height: 65%;
 }
 .user__table {
     margin:auto;
@@ -43,7 +54,7 @@
 .user__label,
 .user__data {
     width: 20%;
-    padding: 16px 0;
+    padding: 8px 0;
     text-align: left;
     padding-left: 48px;
 }
