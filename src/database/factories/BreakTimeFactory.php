@@ -25,7 +25,7 @@ class BreakTimeFactory extends Factory
         static $timestampId = 1;
 
         // 任意の日付を順番に割り当てる
-        static $currentDate = '2024-04-01';
+        static $currentDate = '2024-04-20';
 
         // 休憩開始時間と終了時間
         $breakIn = '12:00:00';
