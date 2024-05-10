@@ -2,7 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\BreakTime;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Timestamp;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,7 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(TimestampsTableSeeder::class);
-        $this->call(BreakTimesTableSeeder::class);
+        User::factory(10)->create();
+        Timestamp::factory()->count(300)->create();
+        BreakTime::factory()->count(300)->create();
     }
 }
