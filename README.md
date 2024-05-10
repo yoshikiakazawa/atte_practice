@@ -35,6 +35,11 @@ mysql:
    ```
 
 3. 「.env.example」ファイルを 「.env」ファイルに命名を変更。または、新しく.env ファイルを作成
+
+```bash
+cp .env.example .env
+```
+
 4. .env に以下の環境変数を追加
 
 ```text
@@ -57,6 +62,16 @@ php artisan key:generate
 ```bash
 php artisan migrate
 ```
+
+### テスト用ダミーデータ
+
+```bash
+php artisan db:seed
+```
+
+- テスト用ユーザー 10 人
+- password:12345678 共通
+- 2024/4/20 ～ 5/19 までのサンプルデータ作成 300 件
 
 ## 使用技術(実行環境)
 
