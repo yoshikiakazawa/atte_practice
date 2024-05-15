@@ -21,7 +21,6 @@ class BreakTimeFactory extends Factory
      */
     public function definition()
     {
-        // ユーザーIDを1から10の範囲で順番に割り当てる
         static $timestampId = 1;
 
         // 任意の日付を順番に割り当てる
@@ -39,15 +38,11 @@ class BreakTimeFactory extends Factory
             'created_at' => $currentDate,
         ];
 
-        // ユーザーIDを更新
-        if ($timestampId < 10)
+        $timestampId++;
+
+        // 日付を10行ごとに1日ずつ増やす
+        if ($timestampId % 10 === 1)
         {
-            $timestampId++;
-        }
-        else
-        {
-            $userId = 1;
-            // 日付を次の日に更新
             $currentDate = date('Y-m-d', strtotime($currentDate . ' + 1 day'));
         }
 
