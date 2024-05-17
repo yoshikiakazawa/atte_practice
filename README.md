@@ -21,7 +21,7 @@
 ```bash
 mysql:
     platform: linux/x86_64(この文追加)
-    image: mysql:8.0.26
+    image: mysql:8.0.37
     environment:
 ```
 
@@ -77,7 +77,7 @@ php artisan db:seed
 
 - PHP8.3.0
 - Laravel8.83.27
-- MySQL8.0.26
+- MySQL8.0.37
 
 ## テーブル設計
 

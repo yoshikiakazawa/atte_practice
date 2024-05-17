@@ -115,7 +115,7 @@ class TimestampController extends Controller
 
             if ($today == $createdTimes)
             {
-                return redirect('/')->with('flash_message', '本日はすでに出勤済みです');
+                return redirect()->route('index')->with('flash_message', '本日はすでに出勤済みです');
             }
             elseif (empty($oldTimes->work_out) && empty($oldBreaks->break_out))
             {
@@ -129,7 +129,7 @@ class TimestampController extends Controller
                     'user_id' => $user->id,
                     'work_in' => Carbon::now(),
                 ]);
-                return redirect('/')->with('flash_message', 'おはようございます！前回の退勤と休憩終了打刻されていませんので修正お願いします');
+                return redirect()->route('index')->with('flash_message', 'おはようございます！前回の退勤と休憩終了打刻されていませんので修正お願いします');
             }
             elseif (empty($oldTimes->work_out))
             {
@@ -140,14 +140,14 @@ class TimestampController extends Controller
                     'user_id' => $user->id,
                     'work_in' => Carbon::now(),
                 ]);
-                return redirect('/')->with('flash_message', 'おはようございます！前回の退勤打刻されていませんので修正お願いします');
+                return redirect()->route('index')->with('flash_message', 'おはようございます！前回の退勤打刻されていませんので修正お願いします');
             }
         }
         Timestamp::create([
             'user_id' => $user->id,
             'work_in' => Carbon::now(),
         ]);
-        return redirect('/')->with('flash_message', 'おはようございます！');
+        return redirect()->route('index')->with('flash_message', 'おはようございます！');
     }
 
     public function workOut()
@@ -167,7 +167,7 @@ class TimestampController extends Controller
                     $oldTimes->work_out = $currentTime;
                     $oldTimes->work_out;
                     $oldTimes->save();
-                    return redirect('/')->with('flash_message', 'お疲れさまでした！');
+                    return redirect()->route('index')->with('flash_message', 'お疲れさまでした！');
                 }
                 elseif (empty($oldBreaks->break_out))
                 {
@@ -208,12 +208,6 @@ class TimestampController extends Controller
         return view('attendance', compact('todayLists', 'users', 'today', 'yesterday', 'tomorrow'));
     }
 
-    public function admin()
-    {
-        $users = User::paginate(5);
-        return view('admin', compact('users'));
-    }
-
     public function user(Request $request, User $id)
     {
         if (empty($request->date))
@@ -232,6 +226,15 @@ class TimestampController extends Controller
             ->whereYear('created_at', $thisMonth->year)
             ->whereMonth('created_at', $thisMonth->month)
             ->latest()->paginate(7)->withQueryString();
+        $thisMonthBreakLists = [];
+        foreach ($thisMonthLists as $thisMonthList)
+        {
+            $breakLists = BreakTime::where('timestamp_id', $thisMonthList->id)
+                ->whereYear('created_at', $thisMonth->year)
+                ->whereMonth('created_at', $thisMonth->month)
+                ->get();
+            $thisMonthBreakLists[$thisMonthList->id] = $breakLists;
+        }
         foreach ($thisMonthLists as $thisMonthList)
         {
             $workIn = Carbon::parse($thisMonthList->work_in);
@@ -243,6 +246,11 @@ class TimestampController extends Controller
             $workingTime = gmdate("H:i:s", $diff);
             $thisMonthList->working_time = $workingTime;
         }
-        return view('user', compact('id', 'thisMonthLists', 'thisMonth', 'lastMonth', 'nextMonth'));
+        return view('user', compact('id', 'thisMonthLists', 'thisMonth', 'lastMonth', 'nextMonth', 'thisMonthBreakLists'));
+    }
+
+    public function login()
+    {
+        return view('auth.login');
     }
 }

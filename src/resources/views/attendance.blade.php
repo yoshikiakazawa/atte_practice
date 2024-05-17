@@ -18,7 +18,7 @@
         </button>
     </form>
     <p class="confirmation__date-today">
-        {{ $today->format('Y-m-d') }}
+        {{ $today->format('Y/m/d') }}
     </p>
     <form class="confirmation__button" action="/attendance" method="get" >
         @csrf

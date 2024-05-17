@@ -1,15 +1,15 @@
-@extends('layouts.app')
+@extends('layouts.app_admin')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 @endsection
 
-@section('header')
-@include('layouts.header_nav')
+@section('header_admin')
+@include('layouts.header_nav_admin')
 @endsection
 
 @section('content')
-@if (Auth::check())
+{{-- @if (Auth::check()) --}}
 
 <div class="admin__heading">
     <h2 class="admin__heading-title">user一覧</h2>
@@ -29,7 +29,7 @@
             <td class="admin__data">{{ $user->name }}</td>
             <td class="admin__data">{{ $user->email }}</td>
             <td class="admin__data">
-                <a class="btn" href="{{ route('user',$user->id) }}">詳細</a>
+                <a class="btn" href="{{ route('admin_user',$user->id) }}">詳細</a>
             </td>
             <td class="admin__data">{{ $user->created_at->format('Y-m-d') }}</td>
         </tr>
@@ -39,5 +39,5 @@
 <div class="admin__pagination">
     {{ $users->links('vendor.pagination.custom') }}
 </div>
-@endif
+{{-- @endif --}}
 @endsection

@@ -3,6 +3,7 @@
 use App\Http\Controllers\BreakTimeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TimestampController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,21 @@ Route::middleware('auth')->group(function ()
     Route::post('/breakin', [BreakTimeController::class, 'breakIn'])->name('breakIn');
     Route::post('/breakout', [BreakTimeController::class, 'breakOut'])->name('breakOut');
     Route::get('/attendance', [TimestampController::class, 'attendance'])->name('attendance');
-    Route::get('/admin', [TimestampController::class, 'admin'])->name('admin');
     Route::get('/user/{id}', [TimestampController::class, 'user'])->name('user');
 });
+Route::prefix('admin')->group(function ()
+{
+    Route::get('login', [AdminController::class, 'login_get'])->name('admin_login_get');
+    Route::post('login', [AdminController::class, 'login_post'])->name('admin_login_post');
+    Route::get('logout', [AdminController::class, 'logout'])->name('admin_logout');
+    Route::post('edit_time', [AdminController::class, 'updateTime'])->name('updateTime');
+    Route::post('edit_break', [AdminController::class, 'updateBreak'])->name('updateBreak');
+});
+
+Route::prefix('admin')->middleware('auth:admins')->group(function ()
+{
+    Route::get('/index', [AdminController::class, 'admin'])->name('admin_index');
+    Route::get('/user/{id}', [AdminController::class, 'user'])->name('admin_user');
+});
+
+Route::get('/login', [TimestampController::class, 'login'])->name('login');
