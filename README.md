@@ -110,5 +110,5 @@ php artisan db:seed
 - 開発環境：http://localhost/
 - phpMyAdmin：http://localhost:8080/
 
-- 本番環境：http://13.114.101.13/
-- phpMyAdmin：http://13.114.101.13:8080/
+- 本番環境：http://52.195.210.56/
+- phpMyAdmin：http://52.195.210.56:8080/
