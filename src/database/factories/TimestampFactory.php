@@ -25,7 +25,7 @@ class TimestampFactory extends Factory
         static $userId = 1;
 
         // 任意の日付を順番に割り当てる
-        static $currentDate = '2024-04-20';
+        static $currentDate = '2024-04-18';
 
         // 作業開始時間と終了時間
         $workIn = '09:00:00'; // 9:00

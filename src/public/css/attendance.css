@@ -27,34 +27,51 @@
     margin: 0 auto;
     height: 70%;
 }
+
 .confirmation__table {
     margin:auto;
     width: 90%;
     border-collapse: collapse;
 }
 
-.confirmation__row {
+.confirmation__table--contents {
     border-top: 1px solid #E0DFDE;
+    text-align: center;
+    height: 16%;
+    font-size: 20px;
+    height: 56px;
 }
 
-.confirmation__label,
-.confirmation__data {
-    width: 20%;
-    padding: 16px 0;
-    text-align: left;
-    padding-left: 48px;
+.confirmation__table--contents-data {
+    padding: 10px;
 }
-
-/* .confirmation__label:first-of-type,
-.confirmation__data:first-of-type {
-    padding-left: 48px;
-}
-
-.confirmation__label:last-of-type,
-.confirmation__data:last-of-type {
-    padding-right: 48px;
-} */
 
 .confirmation__pagination{
     height: 15%;
+}
+
+@media screen and (max-width: 768px){
+    .confirmation__table--contents {
+    font-size: 16px;
+    height: 46px;
+    }
+
+    .confirmation__date-today{
+        font-size: 18px;
+        padding: 0 10px;
+    }
+}
+
+@media screen and (max-width: 480px){
+    .confirmation__table--contents {
+    font-size: 14px;
+    }
+
+    .confirmation__date-today{
+        font-size: 16px;
+    }
+
+    .confirmation__table--contents-data {
+        padding: 4px;
+    }
 }

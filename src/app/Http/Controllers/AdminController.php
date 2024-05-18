@@ -59,7 +59,7 @@ class AdminController extends Controller
         $thisMonthLists = Timestamp::where('user_id', $id->id)
             ->whereYear('created_at', $thisMonth->year)
             ->whereMonth('created_at', $thisMonth->month)
-            ->latest()->paginate(7)->withQueryString();
+            ->latest()->paginate(5)->withQueryString();
         $thisMonthBreakLists = [];
         foreach ($thisMonthLists as $thisMonthList)
         {
@@ -140,6 +140,17 @@ class AdminController extends Controller
             $oldBreak->update([
                 'break_in' => $form['break_in'],
             ]);
+            $breakLists = BreakTime::where('timestamp_id', $form['timestamp_id'])->get();
+            $totalBreakTimeInSeconds = 0;
+            foreach ($breakLists as $breakList)
+            {
+                $breakIn = Carbon::parse($breakList->break_in);
+                $breakOut = Carbon::parse($breakList->break_out);
+                $breakTimeInSeconds = $breakOut->diffInSeconds($breakIn);
+                $totalBreakTimeInSeconds += $breakTimeInSeconds;
+            }
+            $oldTime->break_total = gmdate('H:i:s', $totalBreakTimeInSeconds);
+            $oldTime->save();
             return redirect()->back()->with('flash_message', '休憩開始時間を修正しました');
         }
         elseif ($form['break_out'] != $oldBreak->break_out)

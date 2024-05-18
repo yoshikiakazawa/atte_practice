@@ -52,3 +52,19 @@
     color: #348ABF;
     text-decoration: none;
 }
+
+@media screen and (max-width: 768px){
+    .register-form__heading {
+        padding-top: 0;
+        font-size: 14px;
+    }
+
+    .login__link--text{
+        font-size: 14px;
+    }
+
+    .login__button-submit{
+        font-size: 14px;
+    }
+
+}

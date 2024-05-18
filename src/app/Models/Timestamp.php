@@ -13,6 +13,7 @@ class Timestamp extends Model
         'user_id',
         'work_in',
         'Work_out',
+        'break_total',
     ];
 
     public function user()

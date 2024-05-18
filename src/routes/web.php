@@ -33,8 +33,8 @@ Route::prefix('admin')->group(function ()
     Route::get('login', [AdminController::class, 'login_get'])->name('admin_login_get');
     Route::post('login', [AdminController::class, 'login_post'])->name('admin_login_post');
     Route::get('logout', [AdminController::class, 'logout'])->name('admin_logout');
-    Route::post('edit_time', [AdminController::class, 'updateTime'])->name('updateTime');
-    Route::post('edit_break', [AdminController::class, 'updateBreak'])->name('updateBreak');
+    Route::patch('update_time', [AdminController::class, 'updateTime'])->name('updateTime');
+    Route::patch('update_break', [AdminController::class, 'updateBreak'])->name('updateBreak');
 });
 
 Route::prefix('admin')->middleware('auth:admins')->group(function ()

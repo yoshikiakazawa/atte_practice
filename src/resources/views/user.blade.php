@@ -30,60 +30,60 @@
 
 <div class="user__inner">
     <table class="user__table">
-        <tr class="user__row">
-            <th class="user__label">勤務日</th>
-            <th class="user__label">勤務開始</th>
-            <th class="user__label">勤務終了</th>
-            <th class="user__label">休憩時間</th>
-            <th class="user__label">勤務時間</th>
-            <th class="user__label-modal"></th>
+        <tr class="user__table--contents">
+            <th class="user__table--contents-data">勤務日</th>
+            <th class="user__table--contents-data">勤務開始</th>
+            <th class="user__table--contents-data">勤務終了</th>
+            <th class="user__table--contents-data">休憩時間</th>
+            <th class="user__table--contents-data">勤務時間</th>
+            <th class="user__table--contents-data-modal"></th>
         </tr>
         @foreach ($thisMonthLists as $thisMonthList)
-        <tr class="user__row">
-            <td class="user__data">{{ $thisMonthList->created_at->format('m/d') }}</td>
-            <td class="user__data">{{ $thisMonthList->work_in }}</td>
-            <td class="user__data">{{ $thisMonthList->work_out }}</td>
-            <td class="user__data">{{ $thisMonthList->break_total }}</td>
-            <td class="user__data">{{ $thisMonthList->working_time }}</td>
-            <td class="user__data-modal">
-                <div class="user__data__button">
-                    <label for="modal-toggle-{{ $thisMonthList['id'] }}" class="user__data__button-submit">詳細</label>
+        <tr class="user__table--contents">
+            <td class="user__table--contents-data">{{ $thisMonthList->created_at->format('m/d') }}</td>
+            <td class="user__table--contents-data">{{ $thisMonthList->work_in }}</td>
+            <td class="user__table--contents-data">{{ $thisMonthList->work_out }}</td>
+            <td class="user__table--contents-data">{{ $thisMonthList->break_total }}</td>
+            <td class="user__table--contents-data">{{ $thisMonthList->working_time }}</td>
+            <td class="user__table--contents-data-modal">
+                <div class="user__table--contents-data__button">
+                    <label for="modal-toggle-{{ $thisMonthList['id'] }}" class="user__table--contents-data__button-submit">詳細</label>
                 </div>
                 <input type="checkbox" id="modal-toggle-{{ $thisMonthList['id'] }}" class="modal-toggle">
                 <div class="modal">
                     <label class="close__button-submit" for="modal-toggle-{{ $thisMonthList['id'] }}"></label>
                     <div class="detail-table">
                         <table class="detail-table__inner">
-                            <tr class="detail-table__row">
-                                <th class="detail-table__header">勤務日</th>
-                                <td class="detail-table__text">
+                            <tr class="detail-table__contents">
+                                <th class="detail-table__contents--data">勤務日</th>
+                                <td class="detail-table__contents--data">
                                     {{ $thisMonthList->created_at->format('Y/m/d') }}
                                 </td>
                             </tr>
-                            <tr class="detail-table__row">
-                                <th class="detail-table__header">勤務開始</th>
-                                <td class="detail-table__text">
+                            <tr class="detail-table__contents">
+                                <th class="detail-table__contents--data">勤務開始</th>
+                                <td class="detail-table__contents--data">
                                     {{ $thisMonthList->work_in }}
                                 </td>
                             </tr>
-                            <tr class="detail-table__row">
-                                <th class="detail-table__header">勤務終了</th>
-                                <td class="detail-table__text">
+                            <tr class="detail-table__contents">
+                                <th class="detail-table__contents--data">勤務終了</th>
+                                <td class="detail-table__contents--data">
                                     {{ $thisMonthList->work_out }}
                                 </td>
                             </tr>
                         </table>
                         @foreach ($thisMonthBreakLists[$thisMonthList->id] as $breakList)
                         <table class="detail-table__inner">
-                            <tr class="detail-table__row">
-                                <th class="detail-table__header">休憩開始</th>
-                                <td class="detail-table__text">
+                            <tr class="detail-table__contents">
+                                <th class="detail-table__contents--data">休憩開始</th>
+                                <td class="detail-table__contents--data">
                                     {{ $breakList->break_in }}
                                 </td>
                             </tr>
-                            <tr class="detail-table__row">
-                                <th class="detail-table__header">休憩終了</th>
-                                <td class="detail-table__text">
+                            <tr class="detail-table__contents">
+                                <th class="detail-table__contents--data">休憩終了</th>
+                                <td class="detail-table__contents--data">
                                     {{ $breakList->break_out }}
                                 </td>
                             </tr>

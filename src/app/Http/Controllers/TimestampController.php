@@ -225,7 +225,7 @@ class TimestampController extends Controller
         $thisMonthLists = Timestamp::where('user_id', $id->id)
             ->whereYear('created_at', $thisMonth->year)
             ->whereMonth('created_at', $thisMonth->month)
-            ->latest()->paginate(7)->withQueryString();
+            ->latest()->paginate(5)->withQueryString();
         $thisMonthBreakLists = [];
         foreach ($thisMonthLists as $thisMonthList)
         {

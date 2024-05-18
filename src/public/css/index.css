@@ -1,5 +1,5 @@
 .attendance__panel {
-    max-width: 1230px;
+    max-width: 700px;
     margin: auto;
 }
 
@@ -24,7 +24,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 120px 120px;
-    gap: 40px;
+    gap: 30px;
     margin: 0 120px;
 }
 
@@ -46,4 +46,51 @@
     border-radius: 3px;
     background-color: snow;
     color: #F2F2F0;
+}
+
+.flash_message{
+    margin: 40px;
+}
+
+
+@media screen and (max-width: 768px){
+
+    .attendance__panel {
+        max-width: 550px;
+    }
+
+    .attendance__button-group{
+        grid-template-rows: 100px 100px;
+        margin: 0 60px;
+    }
+
+    .attendance__message{
+        height: 80px;
+        font-size: 20px;
+    }
+
+}
+
+@media screen and (max-width: 480px){
+
+    .attendance__panel {
+        max-width: 400px;
+    }
+
+    .attendance__message{
+        font-size: 18px;
+    }
+
+    .attendance__button-group{
+        gap: 20px;
+    }
+
+    .attendance__button-submit {
+        font-size: 18px;
+    }
+
+    .attendance__button-submit-error {
+        font-size: 18px;
+    }
+
 }

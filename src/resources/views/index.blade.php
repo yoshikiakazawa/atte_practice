@@ -57,13 +57,12 @@
             <button class="attendance__button-submit-error" type="submit">休憩終了</button>
             @endif
         @endif
-
-        @if (session('flash_message'))
+    </div>
+</div>
+@if (session('flash_message'))
         <div class="flash_message">
             {{ session('flash_message') }}
         </div>
-        @endif
-    </div>
-</div>
+@endif
 @endif
 @endsection

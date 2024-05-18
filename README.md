@@ -81,11 +81,12 @@ php artisan db:seed
 
 ## テーブル設計
 
-![alt text](image.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
 
 ## ER 図
 
-![alt text](image-3.png)
+![alt text](image.png)
 
 ## URL
 

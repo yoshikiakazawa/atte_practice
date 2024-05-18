@@ -27,20 +27,20 @@
 </div>
 <div class="confirmation__inner">
     <table class="confirmation__table">
-        <tr class="confirmation__row">
-            <th class="confirmation__label">名前</th>
-            <th class="confirmation__label">勤務開始</th>
-            <th class="confirmation__label">勤務終了</th>
-            <th class="confirmation__label">休憩時間</th>
-            <th class="confirmation__label">勤務時間</th>
+        <tr class="confirmation__table--contents">
+            <th class="confirmation__table--contents-data">名前</th>
+            <th class="confirmation__table--contents-data">勤務開始</th>
+            <th class="confirmation__table--contents-data">勤務終了</th>
+            <th class="confirmation__table--contents-data">休憩時間</th>
+            <th class="confirmation__table--contents-data">勤務時間</th>
         </tr>
         @foreach ($todayLists as $todayList)
-        <tr class="confirmation__row">
-            <td class="confirmation__data">{{ $todayList->user->name }}</td>
-            <td class="confirmation__data">{{ $todayList->work_in }}</td>
-            <td class="confirmation__data">{{ $todayList->work_out }}</td>
-            <td class="confirmation__data">{{ $todayList->break_total }}</td>
-            <td class="confirmation__data">{{ $todayList->working_time }}</td>
+        <tr class="confirmation__table--contents">
+            <td class="confirmation__table--contents-data">{{ $todayList->user->name }}</td>
+            <td class="confirmation__table--contents-data">{{ $todayList->work_in }}</td>
+            <td class="confirmation__table--contents-data">{{ $todayList->work_out }}</td>
+            <td class="confirmation__table--contents-data">{{ $todayList->break_total }}</td>
+            <td class="confirmation__table--contents-data">{{ $todayList->working_time }}</td>
         </tr>
         @endforeach
     </table>
