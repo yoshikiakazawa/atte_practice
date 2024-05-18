@@ -89,24 +89,21 @@ class AdminController extends Controller
         $oldTime = Timestamp::find($request->id);
         if ($form['work_in'] != $oldTime->work_in && $form['work_out'] != $oldTime->work_out)
         {
-            $oldTime->update([
-                'work_in' => $form['work_in'],
-                'work_out' => $form['work_out'],
-            ]);
+            $oldTime->work_in = $form['work_in'];
+            $oldTime->work_out = $form['work_out'];
+            $oldTime->save();
             return redirect()->back()->with('flash_message', '出勤時間と退勤時間を修正しました');
         }
         elseif ($form['work_in'] != $oldTime->work_in)
         {
-            $oldTime->update([
-                'work_in' => $form['work_in'],
-            ]);
+            $oldTime->work_in = $form['work_in'];
+            $oldTime->save();
             return redirect()->back()->with('flash_message', '出勤時間を修正しました');
         }
         elseif ($form['work_out'] != $oldTime->work_out)
         {
-            $oldTime->update([
-                'work_out' => $form['work_out'],
-            ]);
+            $oldTime->work_out = $form['work_out'];
+            $oldTime->save();
             return redirect()->back()->with('flash_message', '退勤時間を修正しました');
         }
         return redirect()->back()->with('flash_message', '変更されていません');
